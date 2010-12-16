@@ -10,13 +10,41 @@
     <property name="reports" value="reports"/>
 	<property name="reports.test" value="${reports}/test"/>
 
+    <property name="cobertura.dir" value="tools/cobertura" />
+    <property name="output-instrumented" value="${output}/instrumented" />
+    <property name="reports.cobertura" value="${reports}/cobertura"/>
+	<property name="reports.cobertura.html.dir" value="${reports.cobertura}/cobertura-html"/>
+
+    <path id="cobertura.classpath">
+      <fileset dir="${cobertura.dir}">
+	    <include name="cobertura.jar" />
+        <include name="lib/**/*.jar" />
+	  </fileset>
+    </path>
+
 	<path id="test.classpath">
+	    <pathelement location="${output-instrumented}"/>
 		<pathelement location="${junit.jar}" />
 		<pathelement location="${output-classes}" />
 	</path>
 
+    <taskdef classpathref="cobertura.classpath" resource="tasks.properties" />
+
     <!-- Public -->
 	<target name="all" depends="test, fail"/>
+	<target name="coverage" depends="instrument, test, html-coverage-report, coverage-check"/>
+
+    <target name="coverage-check">
+	  <cobertura-check branchrate="80" totallinerate="80" />
+    </target>
+
+    <target name="html-coverage-report">
+	  <cobertura-report destdir="${reports.cobertura.html.dir}">
+	    <fileset dir="${src}">
+		  <include name="**/*.java"/>
+	    </fileset>
+	  </cobertura-report>
+	</target>
 
     <target name="fail" if="${test.failed}" unless="nofail">
 	  <fail message="JUnit tests failed!"/>
@@ -30,6 +58,7 @@
 				<path refid="test.classpath">
 				</path>
 			</classpath>
+			<classpath refid="cobertura.classpath" />
 			<formatter type="xml"/>
 			<batchtest filtertrace="no" fork="yes" todir="${reports.test}">
 				<fileset dir="${output-test}">
@@ -46,18 +75,30 @@
       </junitreport>
 	</target>
 
+    <target name="instrument" depends="compile.test">
+	  <delete file="cobertura.ser"/>
+	  <delete dir="${output-instrumented}" />
+	  <cobertura-instrument todir="${output-instrumented}">
+	    <fileset dir="${output-classes}" />
+	  </cobertura-instrument>
+	</target>
+
 	<target name="compile.test" depends="compile">
-		<javac srcdir="${test}" destdir="${output-test}">
+		<javac srcdir="${test}" destdir="${output-test}" debug="yes">
 			<classpath refid="test.classpath" />
+			<classpath refid="cobertura.classpath" />
 		</javac>
 	</target>
 
 	<target name="compile" depends="-create">
-		<javac srcdir="${src}" destdir="${output-classes}" />
+		<javac srcdir="${src}" destdir="${output-classes}" debug="yes">
+  		  <classpath refid="cobertura.classpath" />
+		</javac>
 	</target>
 
 	<target name="clean">
 		<delete dir="${output}" />
+		<delete dir="${reports}" />
 	</target>
 
     <!-- Private -->
@@ -65,5 +106,6 @@
 		<mkdir dir="${output-classes}" />
 		<mkdir dir="${output-test}" />
 		<mkdir dir="${reports.test}" />
+		<mkdir dir="${reports.cobertura.html.dir}" />
 	</target>
 </project>
