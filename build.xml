@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<project name="OurStack" basedir="." default="test">
+<project name="OurStack" basedir="." default="all">
 	<property name="output" value="release" />
 	<property name="src" value="src" />
 	<property name="test" value="test" />
@@ -7,52 +7,63 @@
 	<property name="output-classes" value="${output}/classes" />
 	<property name="output-test" value="${output}/test" />
 
+    <property name="reports" value="reports"/>
+	<property name="reports.test" value="${reports}/test"/>
 
 	<path id="test.classpath">
 		<pathelement location="${junit.jar}" />
 		<pathelement location="${output-classes}" />
-
 	</path>
 
-	<!-- - - - - - - - - - - - - - - - - - 
-          target: test                      
-         - - - - - - - - - - - - - - - - - -->
+    <!-- Public -->
+	<target name="all" depends="test, fail"/>
+
+    <target name="fail" if="${test.failed}" unless="nofail">
+	  <fail message="JUnit tests failed!"/>
+	</target>
+	
 	<target name="test" depends="compile.test">
-		<junit fork="yes" forkmode="once" printsummary="yes" haltonfailure="yes">
+		<junit fork="yes" forkmode="once" printsummary="yes" haltonfailure="no" failureProperty="${test.failed}">
 			<classpath location="${output-test}">
 			</classpath>
 			<classpath>
 				<path refid="test.classpath">
 				</path>
 			</classpath>
-			<batchtest filtertrace="no" fork="yes">
+			<formatter type="xml"/>
+			<batchtest filtertrace="no" fork="yes" todir="${reports.test}">
 				<fileset dir="${output-test}">
 					<include name="**/*Test.class" />
 				</fileset>
 			</batchtest>
 		</junit>
-	</target>
 
-
-	<target name="compile" depends="create">
-		<javac srcdir="${src}" destdir="${output-classes}" />
+      <junitreport todir="${reports.test}">
+	    <fileset dir="${reports.test}">
+		  <include name="TEST-*.xml" />
+		</fileset>
+		<report todir="${reports.test}" />
+      </junitreport>
 	</target>
 
 	<target name="compile.test" depends="compile">
 		<javac srcdir="${test}" destdir="${output-test}">
 			<classpath refid="test.classpath" />
 		</javac>
-
 	</target>
 
+	<target name="compile" depends="-create">
+		<javac srcdir="${src}" destdir="${output-classes}" />
+	</target>
 
 	<target name="clean">
 		<delete dir="${output}" />
 	</target>
-	<target name="create" depends="clean">
+
+    <!-- Private -->
+	<target name="-create" depends="clean">
 		<mkdir dir="${output-classes}" />
 		<mkdir dir="${output-test}" />
+		<mkdir dir="${reports.test}" />
 	</target>
-
-
 </project>
