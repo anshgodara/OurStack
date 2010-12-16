@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<project name="OurStack" basedir=".">
+	<property name="output" value="bin" />
+	<property name="src" value="src" />
+	<property name="test" value="test" />
+	<property name="junit.jar" value="lib/junit-4.8.2.jar" />
+	<property name="output-classes" value="${output}/classes" />
+	<property name="output-test" value="${output}/test" />
+
+
+	<path id="test.classpath">
+		<pathelement location="${junit.jar}" />
+		<pathelement location="${output-classes}" />
+
+	</path>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: test                      
+         - - - - - - - - - - - - - - - - - -->
+	<target name="test" depends="compile.test">
+		<junit fork="yes" forkmode="once" printsummary="yes" haltonfailure="yes">
+			<classpath location="${output-test}">
+			</classpath>
+			<classpath>
+				<path refid="test.classpath">
+				</path>
+			</classpath>
+			<batchtest filtertrace="no" fork="yes">
+				<fileset dir="${output-test}">
+					<include name="**/*Test.class" />
+				</fileset>
+			</batchtest>
+		</junit>
+	</target>
+
+
+	<target name="compile" depends="create">
+		<javac srcdir="${src}" destdir="${output-classes}" />
+	</target>
+
+	<target name="compile.test" depends="compile">
+		<javac srcdir="${test}" destdir="${output-test}">
+			<classpath refid="test.classpath" />
+		</javac>
+
+	</target>
+
+
+	<target name="clean">
+		<delete dir="${output}" />
+	</target>
+	<target name="create" depends="clean">
+		<mkdir dir="${output-classes}" />
+		<mkdir dir="${output-test}" />
+	</target>
+
+
+</project>
