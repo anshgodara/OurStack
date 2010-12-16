@@ -26,4 +26,8 @@ public class OurQueue {
 			return null;
 	}
 
+	public boolean isCapacityExceeded(int capacity) {
+		return queue.size() > capacity;
+	}
+
 }
