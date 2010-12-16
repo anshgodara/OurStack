@@ -56,6 +56,27 @@ public class OurStackTest {
 	}
 	
 	@Test
+	public void checkPeekReturnsNullFromEmptyStack() throws Exception {
+		String element = stack.peek();
+		assertNull(element);
+	}
+	
+	@Test
+	public void checkPeekReturnsTopElement() throws Exception {
+		push("first");
+		assertEquals("first", stack.peek());
+	}
+	
+	@Test
+	public void checkPeekDoesNotReduceStackSize() throws Exception {
+		assertEquals(true, stack.isEmpty());
+		push("first");
+		assertEquals(false, stack.isEmpty());
+		stack.peek();
+		assertEquals(false, stack.isEmpty());
+	}
+	
+	@Test
 	public void checkIfPushCallsDatabaseLogger() throws Exception {
 		push("first");
 		assertEquals("Pushed:first", loggerString);
