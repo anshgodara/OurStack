@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<project name="OurStack" basedir=".">
-	<property name="output" value="bin" />
+<project name="OurStack" basedir="." default="test">
+	<property name="output" value="release" />
 	<property name="src" value="src" />
 	<property name="test" value="test" />
 	<property name="junit.jar" value="lib/junit-4.8.2.jar" />
