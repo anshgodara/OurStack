@@ -4,12 +4,11 @@ import java.util.List;
 public class OurStack {
 	private List<String> elements = new ArrayList<String>();
 	private DatabaseLogger databaseLogger;
-	
-	public OurStack(DatabaseLogger databaseLogger)
-	{
+
+	public OurStack(DatabaseLogger databaseLogger) {
 		this.databaseLogger = databaseLogger;
 	}
-	
+
 	public boolean isEmpty() {
 		return elements.size() == 0;
 	}
@@ -25,11 +24,18 @@ public class OurStack {
 
 	public String pop() {
 		int position = elements.size() - 1;
-		
+
 		String element = elements.get(position);
 		elements.remove(position);
-		
+
 		log("Popped:", element);
 		return element;
+	}
+
+	public String peek() {
+		if (elements.size() > 0)
+			return elements.get(elements.size() - 1);
+		else
+			return null;
 	}
 }
