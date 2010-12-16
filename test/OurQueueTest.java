@@ -20,7 +20,7 @@ public class OurQueueTest {
 	
 	@Test
 	public void testAddSingleElement() throws Exception {
-		queue.add("first");
+		queue.push("first");
 		assertTrue(!queue.isEmpty());
 	}
 
