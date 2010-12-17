@@ -5,21 +5,15 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 public class OurStackTest {
 	private OurStack stack;
 	private DatabaseLogger databaseLogger;
-	private String loggerString;
-	
 
 	@Before
 	public void setup() {
-		databaseLogger = new DatabaseLogger() {
-			@Override
-			public void log(String string) {
-				loggerString = string;
-			}
-		};
+		databaseLogger = Mockito.mock(DatabaseLogger.class);
 		stack = new OurStack(databaseLogger);
 	}
 	
@@ -80,7 +74,7 @@ public class OurStackTest {
 	@Test
 	public void checkIfPushCallsDatabaseLogger() throws Exception {
 		push("first");
-		assertEquals("Pushed:first", loggerString);
+		Mockito.verify(databaseLogger).log("Pushed:first");
 	}
 	
 	private void push(String... elements) {

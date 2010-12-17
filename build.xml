@@ -4,6 +4,7 @@
 	<property name="src" value="src" />
 	<property name="test" value="test" />
 	<property name="junit.jar" value="lib/junit-4.8.2.jar" />
+	<property name="mockito.jar" value="lib/mockito-all-1.8.5.jar" />
 	<property name="output-classes" value="${output}/classes" />
 	<property name="output-test" value="${output}/test" />
 
@@ -25,6 +26,7 @@
 	<path id="test.classpath">
 	    <pathelement location="${output-instrumented}"/>
 		<pathelement location="${junit.jar}" />
+		<pathelement location="${mockito.jar}" />
 		<pathelement location="${output-classes}" />
 	</path>
 
@@ -35,7 +37,7 @@
 	<target name="coverage" depends="instrument, test, html-coverage-report, coverage-check"/>
 
     <target name="coverage-check">
-	  <cobertura-check branchrate="100" totallinerate="85" />
+	  <cobertura-check branchrate="100" totallinerate="100" />
     </target>
 
     <target name="html-coverage-report">
@@ -79,7 +81,9 @@
 	  <delete file="cobertura.ser"/>
 	  <delete dir="${output-instrumented}" />
 	  <cobertura-instrument todir="${output-instrumented}">
-	    <fileset dir="${output-classes}" />
+	    <fileset dir="${output-classes}">
+		  <exclude name="DatabaseLogger.class"/>
+		</fileset>
 	  </cobertura-instrument>
 	</target>
 
