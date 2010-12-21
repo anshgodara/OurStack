@@ -15,6 +15,7 @@
     <property name="output-instrumented" value="${output}/instrumented" />
     <property name="reports.cobertura" value="${reports}/cobertura"/>
 	<property name="reports.cobertura.html.dir" value="${reports.cobertura}/cobertura-html"/>
+	<property name="reports.checkstyle" value="${reports}/checkstyle"/>
 
     <path id="cobertura.classpath">
       <fileset dir="${cobertura.dir}">
@@ -31,10 +32,19 @@
 	</path>
 
     <taskdef classpathref="cobertura.classpath" resource="tasks.properties" />
+	<taskdef resource="checkstyletask.properties" classpath="tools/checkstyle/checkstyle-5.3-all.jar" />
 
     <!-- Public -->
 	<target name="all" depends="test, fail"/>
 	<target name="coverage" depends="instrument, test, html-coverage-report, coverage-check"/>
+
+    <target name="checkstyle" depends="-create">
+      <checkstyle config="tools/checkstyle/sun_checks.xml">
+	    <fileset dir="${src}" includes="**/*.java"/>
+	    <formatter type="plain"/>
+	    <formatter type="xml" toFile="${reports.checkstyle}/checkstyle_errors.xml"/>
+      </checkstyle>
+	</target>
 
     <target name="coverage-check">
 	  <cobertura-check branchrate="100" totallinerate="100" />
@@ -111,5 +121,6 @@
 		<mkdir dir="${output-test}" />
 		<mkdir dir="${reports.test}" />
 		<mkdir dir="${reports.cobertura.html.dir}" />
+		<mkdir dir="${reports.checkstyle}" />
 	</target>
 </project>
